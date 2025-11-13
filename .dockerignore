@@ -1,0 +1,15 @@
+.git
+.gitignore
+.env
+private.key
+public.key
+DocuSignApi.code-workspace
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.idea/
+.vscode/
