@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: dockerfile.prod
     container_name: docusign-api-prod
+    ports:
+      - "5001:5001"
     expose:
       - "5001"
     env_file:
