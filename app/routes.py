@@ -19,16 +19,12 @@ def send_pdf():
     integrator_key = data.get("integrator_key")
     account_id = data.get("account_id")
     user_id = data.get("user_id")
-    private_key_raw = data.get("private_key")
+    private_key = data.get("private_key")
     client_email = data.get("email")
     client_name = data.get("name")
 
-    if not all([integrator_key, account_id, user_id, private_key_raw, client_email, client_name]):
+    if not all([integrator_key, account_id, user_id, private_key, client_email, client_name]):
       return jsonify({"error": "Missing required fields"}), 400
-
-    # Reformat private key
-    private_key = private_key_raw.replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "").replace(" ", "\n").strip()
-    private_key = "-----BEGIN PRIVATE KEY-----\n" + private_key + "\n-----END PRIVATE KEY-----"
 
     client = DocuSignClient(integrator_key, account_id, user_id, private_key)
     envelope_summary = client.send_document(client_email, client_name, file.read(), file.filename)
