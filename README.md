@@ -38,6 +38,8 @@ sudo docker run hello-world   # Test rapide
 
 ## 3. Initialisation DocuSign eSign
 
+Si vous n'avez pas d'intégration DocuSign eSign : 
+
 1. Créez une application intégrée sur [DocuSign Developer](https://developers.docusign.com/).  
 2. Allez dans **My Apps & Keys** -> **Add App and Integration Key**.  
 3. Donnez un nom à votre application.
@@ -49,8 +51,71 @@ sudo docker run hello-world   # Test rapide
 7. Dans **Additional settings**, ajoutez une **Redirect URI** :
 
    ``` bash
-   http://localhost:3000/consent-complete
+   https://www.google.com
    ```
 
 8. Autorisez la méthode HTTP **POST**.
 9. Enregistrez votre application.
+
+## 4. Consentement DocuSign
+
+Pour finaliser l’intégration DocuSign, vous devez accepter le consentement OAuth :
+
+1. Remplacez {your_integration_id} par l’ID d’intégration DocuSign que vous avez créé dans l'URl suivante.
+
+   ``` bash
+   https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature%20impersonation&client_id={your_integration_id}&redirect_uri=https://www.google.com
+   ```
+
+2. Ouvrez cette URL dans votre navigateur et suivez les instructions pour accepter le consentement.
+   > Le consentement DocuSign n'est à faire **qu'une seule fois** pour initialiser l'accès via votre compte.
+
+## 5. Mise en place du serveur API
+
+### Firewall UFW
+
+```bash
+sudo apt install ufw -y
+sudo ufw allow 80
+sudo ufw allow 5001
+sudo ufw enable
+```
+
+### Lancement de l'API
+
+```bash
+git clone https://github/AnakinGig/DocuSignApi
+sudo docker compose -f docker-compose.prod.yml up --build
+```
+Le serveur tourne ensuite sur port 5001.
+
+## 6. Comment utiliser l’API
+
+Votre application cliente (webshop, bot, React, PHP…) doit envoyer :
+- un fichier PDF (file)
+- les infos du signataire (email, name)
+- la configuration d’intégration (integrator_key, user_id, account_id, private_key_b64)
+
+### Example cURL
+
+```bash
+curl -X POST https://votre-domaine.com/send-pdf \
+  -F "file=@document.pdf" \
+  -F "email=test@demo.com" \
+  -F "name=Nom Prenom" \
+  -F "integrator_key=xxxx" \
+  -F "user_id=xxxx" \
+  -F "account_id=xxxx" \
+  -F "private_key_b64={private_key_content_encoded_base64_utf-8}" \
+```
+
+## 7. Résultat
+
+L'API renvoie : 
+
+```json
+{
+  "envelope_id": "12345678-ABCD-..."
+}
+```
+Vous pouvez suivre la signature dans votre tableau de bord DocuSign.

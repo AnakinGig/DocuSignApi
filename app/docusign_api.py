@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from docusign_esign import ApiClient, ApiException, EnvelopesApi
 from docusign_esign.models import Document, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients
-import base64, time, logging
+import base64, time, logging, os
 
 docusign_bp = Blueprint("docusign", __name__)
 
@@ -20,8 +20,8 @@ def get_docusign_token(data):
 
     private_key = base64.b64decode(data.get("private_key_b64")).decode('utf-8')
     integrator_key = data.get("integrator_key")
-    user_id = data.get("user_id")    # MUST be the GUID of the user
-    auth_server = data.get("auth_server")  # ex: "account-d.docusign.com"
+    user_id = data.get("user_id")
+    auth_server = "https://account-d.docusign.com" if os.getenv("DOCUSIGN_ENV")=="demo" else "https://account.docusign.com"
 
     logging.info("Requesting DocuSign JWT token")
 
@@ -109,7 +109,7 @@ def send_pdf():
         access_token = get_docusign_token(data)
 
         account_id = data.get("account_id")
-        base_path = data.get("base_path")  # ex: "https://demo.docusign.net/restapi"
+        base_path = "https://demo.docusign.net/restapi" if os.getenv("DOCUSIGN_ENV")=="demo" else "https://www.docusign.net/restapi"
 
         logging.info("Sending envelope...")
 
