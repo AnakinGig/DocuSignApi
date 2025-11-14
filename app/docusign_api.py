@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
-import base64, time, logging
 from docusign_esign import ApiClient, ApiException, EnvelopesApi
 from docusign_esign.models import Document, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients
+import base64, time, logging
 
 docusign_bp = Blueprint("docusign", __name__)
 
@@ -18,10 +18,14 @@ def get_docusign_token(data):
     if DOCUSIGN_TOKEN_CACHE["access_token"] and DOCUSIGN_TOKEN_CACHE["expires_at"] > time.time():
         return DOCUSIGN_TOKEN_CACHE["access_token"]
 
-    private_key = base64.b64decode(data.get("private_key")).encode('utf-8')
+    private_key = base64.b64decode(data.get("private_key")).decode('utf-8')
+    logging.info(private_key)
     integration_key = data.get("integration_key")
+    logging.info(integration_key)
     user_id = data.get("user_id")    # MUST be the GUID of the user
+    logging.info(user_id)
     auth_server = data.get("auth_server")  # ex: "account-d.docusign.com"
+    logging.info(auth_server)
 
     logging.info("Requesting DocuSign JWT token")
 
