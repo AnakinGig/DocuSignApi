@@ -55,15 +55,17 @@ def get_docusign_token(data):
 @docusign_bp.route("/send-pdf", methods=["POST"])
 def send_pdf():
     try:
-        logging.info("Received data")
-
         data = request.form  # text fields
+        logging.info("Received data")
         file = request.files.get("file")  # PDF file
+        logging.info("Received file")
+
+        if not data:
+            return jsonify({"error": "Missing data"}), 400
 
         if not file:
             return jsonify({"error": "Missing PDF file"}), 400
 
-        logging.info("Received file")
 
         # Extract signer info
         signer_email = data.get("signer_email")
