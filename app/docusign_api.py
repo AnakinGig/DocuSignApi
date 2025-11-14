@@ -19,13 +19,9 @@ def get_docusign_token(data):
         return DOCUSIGN_TOKEN_CACHE["access_token"]
 
     private_key = base64.b64decode(data.get("private_key_b64")).decode('utf-8')
-    logging.info(private_key)
     integrator_key = data.get("integrator_key")
-    logging.info(integrator_key)
     user_id = data.get("user_id")    # MUST be the GUID of the user
-    logging.info(user_id)
     auth_server = data.get("auth_server")  # ex: "account-d.docusign.com"
-    logging.info(auth_server)
 
     logging.info("Requesting DocuSign JWT token")
 
@@ -70,13 +66,9 @@ def send_pdf():
         if not file:
             return jsonify({"error": "Missing PDF file"}), 400
 
-
         # Extract signer info
         email = data.get("email")
         name = data.get("name")
-
-        logging.info(email)
-        logging.info(name)
 
         # Convert PDF → Base64
         pdf_base64 = base64.b64encode(file.read()).decode("utf-8")
