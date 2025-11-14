@@ -1,6 +1,8 @@
-# DocuSign eSign API
+# DocuSign eSign API - Guide de déploiement et d'utilisation
 
 [![DocuSign](https://img.shields.io/badge/DocuSign-eSign-orange?logo=docusign)](https://www.docusign.com/)
+
+API Flask permettant d’envoyer des PDF à signer via DocuSign.
 
 ---
 
