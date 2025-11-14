@@ -18,7 +18,7 @@ def get_docusign_token(data):
     if DOCUSIGN_TOKEN_CACHE["access_token"] and DOCUSIGN_TOKEN_CACHE["expires_at"] > time.time():
         return DOCUSIGN_TOKEN_CACHE["access_token"]
 
-    private_key = data.get("private_key")
+    private_key = base64.b64decode(data.get("private_key")).encode('utf-8')
     integration_key = data.get("integration_key")
     user_id = data.get("user_id")    # MUST be the GUID of the user
     auth_server = data.get("auth_server")  # ex: "account-d.docusign.com"
@@ -68,11 +68,11 @@ def send_pdf():
 
 
         # Extract signer info
-        signer_email = data.get("signer_email")
-        signer_name = data.get("signer_name")
+        email = data.get("email")
+        name = data.get("name")
 
-        logging.info(signer_email)
-        logging.info(signer_name)
+        logging.info(email)
+        logging.info(name)
 
         # Convert PDF → Base64
         pdf_base64 = base64.b64encode(file.read()).decode("utf-8")
@@ -93,8 +93,8 @@ def send_pdf():
         )
 
         signer = Signer(
-            email=signer_email,
-            name=signer_name,
+            email=email,
+            name=name,
             recipient_id="1",
             routing_order="1",
             tabs=Tabs(sign_here_tabs=[sign_here])
