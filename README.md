@@ -137,7 +137,7 @@ L'API renvoie :
 
 ```json
 {
-  "envelope_id": "1"
+  "envelope_id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 }
 ```
 
