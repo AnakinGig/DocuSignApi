@@ -100,6 +100,7 @@ Créez un secret Docker avec cette clé :
 ```bash
 sudo docker swarm init # Initialiser le mode swarm si ce n'est pas déjà fait
 sudo docker secret create docusign_private_key private.pem
+sudo rm private.pem
 ```
 
 ### Déploiement avec Docker
@@ -118,6 +119,23 @@ Exemple (Compose V2) :
 docker compose up --build
 # ou avec l'ancien binaire docker-compose
 docker-compose up --build
+```
+
+Pour déployer avec `docker stack` (Swarm), construisez et taggez d'abord l'image produit, ou poussez-la vers un registre.
+
+Construire l'image locale et déployer (image locale must exist on swarm nodes):
+
+```bash
+docker build -f dockerfile.prod -t docusign-api:prod .
+sudo docker stack deploy -c docker-compose.prod.yml docusign_stack
+```
+
+Si vous utilisez un registre (Docker Hub / private registry), taggez et poussez l'image, puis mettez à jour `docker-compose.prod.yml`'s `image:` value to match `youruser/docusign-api:prod` before `docker stack deploy`:
+
+```bash
+docker build -f dockerfile.prod -t youruser/docusign-api:prod .
+docker push youruser/docusign-api:prod
+sudo docker stack deploy -c docker-compose.prod.yml docusign_stack
 ```
 
 ## 6. Comment utiliser l’API
