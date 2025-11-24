@@ -86,7 +86,6 @@ components:
           example: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
         private_key_b64:
           type: string
-          format: base64
           example: your_private_key_in_base64
 
   securitySchemes:
