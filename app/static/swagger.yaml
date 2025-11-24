@@ -2,6 +2,7 @@ openapi: 3.0.4
 info:
   title: Docusign eSign REST API
   description: |-
+    This API allows you to send PDFs to clients using DocuSign eSign.
   version: 1.0.0
 servers:
   - url: http://192.168.10.110/api/
@@ -20,6 +21,9 @@ paths:
       description: |
         Send a pdf to a specified client, with specified credentials.
 
+        **Important:** The `private_key_b64` **must be Base64 encoded**.  
+        Sending a raw private key will fail authentication.
+
         ### cURL example
         ```bash
         curl -X POST "http://192.168.10.110/api/send-pdf" \
@@ -33,7 +37,10 @@ paths:
         ```
       operationId: sendPdf
       requestBody:
-        description: Send a pdf to a client
+        description: |
+          Send a PDF to a client with the required credentials.
+
+          **The `private_key_b64` must be Base64 encoded.**
         content:
           multipart/form-data:
             schema:
@@ -46,9 +53,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Send-pdf'
+                type: object
+                properties:
+                  envelope_id:
+                    type: string
+                    example: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
         '400':
-          description: Missing data
+          description: Missing data or file
         '500':
           description: Docusign error
 
@@ -86,6 +97,8 @@ components:
           example: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
         private_key_b64:
           type: string
+          description: |
+            **MUST BE BASE64 ENCODED**. Your raw private key will not work.
           example: your_private_key_in_base64
 
   securitySchemes:
