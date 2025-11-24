@@ -21,26 +21,20 @@ paths:
       description: |
         Send a pdf to a specified client, with specified credentials.
 
-        **Important:** The `private_key_b64` **must be Base64 encoded**.  
-        Sending a raw private key will fail authentication.
-
         ### cURL example
         ```bash
         curl -X POST "http://192.168.10.110/api/send-pdf" \
           -F "file=@/path/to/your/file.pdf" \
-          -F "integrator_key=YOUR_INTEGRATOR_KEY" \
-          -F "account_id=YOUR_ACCOUNT_ID" \
-          -F "user_id=YOUR_USER_ID" \
-          -F "private_key_b64=YOUR_BASE64_PRIVATE_KEY" \
           -F "email=your.email@example.com" \
-          -F "name=Your Name"
+          -F "name=Your Name" \
+          -F "integrator_key=YOUR_INTEGRATOR_KEY" \
+          -F "user_id=YOUR_USER_ID" \
+          -F "account_id=YOUR_ACCOUNT_ID"
         ```
       operationId: sendPdf
       requestBody:
         description: |
           Send a PDF to a client with the required credentials.
-
-          **The `private_key_b64` must be Base64 encoded.**
         content:
           multipart/form-data:
             schema:
@@ -73,7 +67,6 @@ components:
         - integrator_key
         - user_id
         - account_id
-        - private_key_b64
       type: object
       properties:
         file:
@@ -95,11 +88,6 @@ components:
         account_id:
           type: string
           example: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-        private_key_b64:
-          type: string
-          description: |
-            **MUST BE BASE64 ENCODED**. Your raw private key will not work.
-          example: your_private_key_in_base64
 
   securitySchemes:
     api_key:
