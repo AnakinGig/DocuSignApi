@@ -96,12 +96,13 @@ def send_pdf():
       document_id="1"
     )
 
-    # Place signature using anchor
+    # Place signature at exact position
     sign_here = SignHere(
-      anchor_string="SIGN_HERE",
-      anchor_units="pixels",
-      anchor_x_offset="100",
-      anchor_y_offset="100"
+      document_id="1",
+      page_number="1",
+      x_position="400",
+      y_position="700",
+      tab_label="Signature"
     )
 
     signer = Signer(
