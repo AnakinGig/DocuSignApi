@@ -8,7 +8,15 @@ services:
       - "5001:5001"
     env_file:
       - .env
+    environment:
+      - DOCUSIGN_PRIVATE_KEY_PATH=/run/secrets/docusign_private_key
+    secrets:
+      - docusign_private_key
     restart: unless-stopped
 networks:
   main:
     driver: bridge
+
+secrets:
+  docusign_private_key:
+    file: ./private.pem

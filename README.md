@@ -78,6 +78,7 @@ Pour finaliser l’intégration DocuSign, vous devez accepter le consentement OA
 
 ```bash
 sudo apt install ufw -y
+sudo ufw allow 22 # Si vous utilisez SSH
 sudo ufw allow 80
 sudo ufw allow 5001
 sudo ufw enable
@@ -97,17 +98,27 @@ Copiez votre clée privée `private.pem` à la racine du projet.
 Créez un secret Docker avec cette clé :
 
 ```bash
-docker swarm init # Initialiser le mode swarm si ce n'est pas déjà fait
-docker secret create docusign_private_key private.pem
+sudo docker swarm init # Initialiser le mode swarm si ce n'est pas déjà fait
+sudo docker secret create docusign_private_key private.pem
 ```
 
 ### Déploiement avec Docker
 
 ```bash
-docker stack deploy -c docker-compose.prod.yml docusign_stack
+sudo docker stack deploy -c docker-compose.prod.yml docusign_stack
 ```
 
 Le serveur tourne ensuite sur port 5001.
+
+Si vous voulez lancer l'API en local sans Swarm (développement), placez votre `private.pem` à la racine du projet. `docker-compose.yml` est configuré pour monter le fichier `./private.pem` comme secret local et exposera la clé à l'application sur `/run/secrets/docusign_private_key`.
+
+Exemple (Compose V2) :
+
+```bash
+docker compose up --build
+# ou avec l'ancien binaire docker-compose
+docker-compose up --build
+```
 
 ## 6. Comment utiliser l’API
 

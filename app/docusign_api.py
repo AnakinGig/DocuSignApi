@@ -11,16 +11,17 @@ def load_private_key():
   global _CACHED_PRIVATE_KEY
   if _CACHED_PRIVATE_KEY:
     return _CACHED_PRIVATE_KEY
-  
+
   private_key_path = os.getenv("DOCUSIGN_PRIVATE_KEY_PATH")
   if not private_key_path:
     raise ValueError("DOCUSIGN_PRIVATE_KEY_PATH environment variable is not set")
-  
+
   if not os.path.isfile(private_key_path):
     raise FileNotFoundError(f"Private key file not found at path: {private_key_path}")
-  
+
+  # Read as bytes and decode to text (PEM keys are textual). Cache as string.
   with open(private_key_path, "rb") as f:
-    _CACHED_PRIVATE_KEY = f.read()
+    _CACHED_PRIVATE_KEY = f.read().decode("utf-8")
   return _CACHED_PRIVATE_KEY
 
 DOCUSIGN_TOKEN_CACHE = {
