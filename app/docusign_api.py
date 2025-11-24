@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from docusign_esign import ApiClient, ApiException, EnvelopesApi
-from docusign_esign.models import Document, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients
+from docusign_esign.models import Document, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients, TemplateRole, CompositeTemplate, ServerTemplate, InlineTemplate
 import base64, time, logging, os
 
 docusign_bp = Blueprint("docusign", __name__)
@@ -72,9 +72,7 @@ def get_docusign_token(data):
 def send_pdf():
   try:
     data = request.form
-    logging.info("Received data")
     file = request.files.get("file")
-    logging.info("Received file")
 
     if not data:
       return jsonify({"error": "Missing data"}), 400
@@ -85,6 +83,7 @@ def send_pdf():
     # Extract signer info
     email = data.get("email")
     name = data.get("name")
+    template_id = "9ebdb2fe-323b-4c76-b057-afce9f51b84a"
 
     # Convert PDF to Base64
     pdf_base64 = base64.b64encode(file.read()).decode("utf-8")
@@ -97,38 +96,39 @@ def send_pdf():
     )
 
     # Place signature at exact position
-    sign_here = SignHere(
-      document_id="1",
-      page_number="1",
-      x_position="400",
-      y_position="700",
-      tab_label="Signature"
-    )
-
-    signer = Signer(
+    signer_role = TemplateRole(
       email=email,
       name=name,
-      recipient_id="1",
-      routing_order="1",
-      tabs=Tabs(sign_here_tabs=[sign_here])
+      role_name="Signer",
+      routing_order="1"
     )
 
-    recipients = Recipients(signers=[signer])
+    # Composite template merges PDF with template fields
+    composite_template = CompositeTemplate(
+      composite_template_id="1",
+      server_templates=[
+        ServerTemplate(
+          sequence="1",
+          template_id=template_id
+        )
+      ],
+      inline_templates=[
+        InlineTemplate(
+          sequence="1",
+          recipients=Recipients(signers=[signer_role])
+        )
+      ],
+      document=document
+    )
 
     envelope_definition = EnvelopeDefinition(
-      email_subject="Veuillez signer le document",
-      documents=[document],
-      recipients=recipients,
-      status="sent",
-      enforce_signer_visibility="false",
-      allow_markup="false",
-      signing_location="offline",
-      enforce_signature_fields="true",
+      email_subject="Veuillez lire et signer ce document",
+      composite_templates=[composite_template],
+      status="sent"
     )
 
     # Get DocuSign token
     access_token = get_docusign_token(data)
-
     account_id = data.get("account_id")
     base_path = "https://demo.docusign.net/restapi" if os.getenv("DOCUSIGN_ENV")=="demo" else "https://www.docusign.net/restapi"
 
