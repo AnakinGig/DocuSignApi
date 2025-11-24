@@ -119,7 +119,11 @@ def send_pdf():
       email_subject="Veuillez signer le document",
       documents=[document],
       recipients=recipients,
-      status="sent"
+      status="sent",
+      enforce_signer_visibility="false",
+      allow_markup="false",
+      signing_location="offline",
+      enforce_signature_fields="true",
     )
 
     # Get DocuSign token
