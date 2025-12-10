@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from docusign_esign import ApiClient, ApiException, EnvelopesApi
-from docusign_esign.models import Document, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients
-import base64, time, logging, os, json
+from docusign_esign.models import Document, EnvelopeDefinition, Signer, SignHere, Tabs, Recipients, TemplateRole, CompositeTemplate, ServerTemplate, InlineTemplate
+import base64, time, logging, os
 
 docusign_bp = Blueprint("docusign", __name__)
 
@@ -168,7 +168,6 @@ def send_pdf():
 
     # Get DocuSign token
     access_token = get_docusign_token(data)
-
     account_id = data.get("account_id")
     base_path = "https://demo.docusign.net/restapi" if os.getenv("DOCUSIGN_ENV")=="demo" else "https://www.docusign.net/restapi"
 
